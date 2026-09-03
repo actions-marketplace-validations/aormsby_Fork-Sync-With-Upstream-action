@@ -52,8 +52,10 @@ set_out_put() {
 
 find_last_synced_commit() {
     LAST_SYNCED_COMMIT=""
-    TARGET_BRANCH_LOG="$(git rev-list "${INPUT_TARGET_SYNC_BRANCH}")"
-    UPSTREAM_BRANCH_LOG="$(git rev-list "upstream/${INPUT_UPSTREAM_SYNC_BRANCH}")"
+    # `--` separates revisions from paths so a branch whose name collides with a
+    # tracked path (e.g. `main` vs the `main/` firmware dir) is not ambiguous.
+    TARGET_BRANCH_LOG="$(git rev-list "${INPUT_TARGET_SYNC_BRANCH}" --)"
+    UPSTREAM_BRANCH_LOG="$(git rev-list "upstream/${INPUT_UPSTREAM_SYNC_BRANCH}" --)"
 
     for hash in ${TARGET_BRANCH_LOG}; do
         UPSTREAM_CHECK="$(echo "${UPSTREAM_BRANCH_LOG}" | grep "${hash}")"
